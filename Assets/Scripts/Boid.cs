@@ -7,10 +7,9 @@ public class Boid : MonoBehaviour
 
     private const float CLOSE_FACTOR = 100f;
     private const float WITH_FACTOR = 40f;
-    private const float AWAY_FACTOR = 5f;
+    private const float AWAY_FACTOR = 50f;
 
-    public Vector2 dir;
-    public float speed;
+    public Vector2 velocity;
 
     public Rigidbody2D rb;
 
@@ -19,8 +18,7 @@ public class Boid : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         rb.position = new Vector2(Random.Range(-6f, 6f), Random.Range(-3f, 3f));
-        this.dir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
-        this.speed = Random.Range(.1f, .6f);
+        velocity = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
     }
 
     public void MoveCloser(List<Boid> boids)
@@ -29,15 +27,20 @@ public class Boid : MonoBehaviour
 
         // Computes the average distance between the other boids
         Vector2 avg = Vector2.zero;
+
         foreach (Boid b in boids)
         {
-            if (b.rb.position == this.rb.position) continue; //myself
-            avg += (this.rb.position - b.rb.position);
+            if (rb.position == b.rb.position) continue; //myself
+
+            avg += (rb.position - b.rb.position);
         }
+
         avg /= boids.Count;
 
+        Debug.DrawLine(rb.position, rb.position - avg); //direction towards nearest flock
+
         // Sets the velocity towards the others
-        this.dir -= (avg / CLOSE_FACTOR).normalized;
+        velocity -= (avg / CLOSE_FACTOR);
     }
 
     public void MoveWith(List<Boid> boids)
@@ -45,13 +48,15 @@ public class Boid : MonoBehaviour
         if (boids.Count < 1) return;
 
         // Computes the average velocity between the other boids
-        float avg = 0f;
+        Vector2 avg = Vector2.zero;
+
         foreach (Boid b in boids)
-            avg += b.speed;
+            avg += b.velocity;
+
         avg /= boids.Count;
 
         // Sets our velocity towards the others
-        this.speed += (avg / WITH_FACTOR);
+        velocity += (avg / WITH_FACTOR);
     }
 
     public void MoveAway(List<Boid> boids, float minDistance)
@@ -63,10 +68,10 @@ public class Boid : MonoBehaviour
 
         foreach (Boid b in boids)
         {
-            if (Vector2.Distance(this.rb.position, b.rb.position) < minDistance)
+            if (Vector2.Distance(rb.position, b.rb.position) < minDistance)
             {
                 nbClose++;
-                Vector2 diff = (this.rb.position - b.rb.position);
+                Vector2 diff = (rb.position - b.rb.position);
                 if (diff.x >= 0f) diff.x = Mathf.Sqrt(minDistance) - diff.x;
                 else if (diff.x < 0f) diff.x = -Mathf.Sqrt(minDistance) - diff.x;
                 if (diff.y >= 0f) diff.y = Mathf.Sqrt(minDistance) - diff.y;
@@ -77,37 +82,38 @@ public class Boid : MonoBehaviour
 
         if (nbClose == 0) return;
 
-        this.dir -= (distance / AWAY_FACTOR).normalized;
+        velocity -= (distance / AWAY_FACTOR);
     }
 
     private void FixedUpdate()
     {
-        if (Mathf.Abs(this.dir.x * speed) > MAX_VELOCITY || Mathf.Abs(this.dir.y * speed) > MAX_VELOCITY)
+        if (Mathf.Abs(velocity.x) > MAX_VELOCITY || Mathf.Abs(this.velocity.y) > MAX_VELOCITY)
         {
-            float scaleFactor = MAX_VELOCITY / Mathf.Max(Mathf.Abs(this.dir.x * speed), Mathf.Abs(this.dir.y * speed));
+            float scaleFactor = MAX_VELOCITY / Mathf.Max(Mathf.Abs(this.velocity.x), Mathf.Abs(this.velocity.y));
 
-            speed *= scaleFactor;
+            velocity *= scaleFactor;
         }
-        rb.MovePosition(this.rb.position + (this.dir * speed) * Time.deltaTime);
 
-        transform.rotation = Quaternion.identity;
+        rb.MovePosition(rb.position + (velocity / 10f) * Time.deltaTime);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        this.dir = -this.dir;
+        velocity = -velocity;
     }
 
     private void OnDrawGizmos()
     {
+        // MoveWith & MoveCloser
         Gizmos.color = new Color(0f, 1f, 0f, .2f);
-        Gizmos.DrawWireSphere(rb.position, 2f);
+        Gizmos.DrawWireSphere(rb.position, 3f);
 
+        // MoveAway
         Gizmos.color = new Color(1f, 0f, 0f, .2f);
-        Gizmos.DrawWireSphere(rb.position, 0.5f);
+        Gizmos.DrawWireSphere(rb.position, 1f);
 
         Gizmos.color = new Color(0f, 0f, 1f, .4f);
-        Gizmos.DrawLine(rb.position, rb.position + this.dir.normalized);
+        Gizmos.DrawLine(rb.position, rb.position + velocity.normalized);
     }
 
 }
