@@ -3,11 +3,12 @@ using UnityEngine;
 
 public class Boid : MonoBehaviour
 {
-    private const float MAX_VELOCITY = 2f;
+    public float MAX_VELOCITY = 2f;
 
     private const float CLOSE_FACTOR = 100f;
     private const float WITH_FACTOR = 40f;
-    private const float AWAY_FACTOR = 50f;
+    private const float AWAY_FACTOR = 5f;
+    private const float AVOID_FACTOR = 5f;
 
     public Vector2 velocity;
 
@@ -37,7 +38,7 @@ public class Boid : MonoBehaviour
 
         avg /= boids.Count;
 
-        Debug.DrawLine(rb.position, rb.position - avg); //direction towards nearest flock
+        Debug.DrawLine(rb.position, rb.position - avg, Color.white);
 
         // Sets the velocity towards the others
         velocity -= (avg / CLOSE_FACTOR);
@@ -82,7 +83,27 @@ public class Boid : MonoBehaviour
 
         if (nbClose == 0) return;
 
-        velocity -= (distance / AWAY_FACTOR);
+        Debug.DrawLine(rb.position, rb.position + (velocity - distance).normalized, Color.red);
+
+        velocity += (distance / AWAY_FACTOR);
+    }
+
+    public void Avoid (List<Vector2> hitPositions, float minDistance)
+    {
+        if (hitPositions.Count < 1) return;
+
+        Vector2 direction = Vector2.zero;
+        foreach (Vector2 v in hitPositions)
+        {
+            Vector2 diff = (rb.position - v);
+            if (diff.x >= 0f) diff.x = Mathf.Sqrt(minDistance) - diff.x;
+            else if (diff.x < 0f) diff.x = -Mathf.Sqrt(minDistance) - diff.x;
+            if (diff.y >= 0f) diff.y = Mathf.Sqrt(minDistance) - diff.y;
+            else if (diff.y < 0f) diff.y = -Mathf.Sqrt(minDistance) - diff.y;
+            direction += diff;
+        }
+
+        velocity += (direction / AVOID_FACTOR);
     }
 
     private void FixedUpdate()
@@ -94,7 +115,7 @@ public class Boid : MonoBehaviour
             velocity *= scaleFactor;
         }
 
-        rb.MovePosition(rb.position + (velocity / 10f) * Time.deltaTime);
+        rb.MovePosition(rb.position + (velocity / 2f) * Time.deltaTime);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -104,16 +125,17 @@ public class Boid : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        // MoveWith & MoveCloser
+        //Far green circle
         Gizmos.color = new Color(0f, 1f, 0f, .2f);
-        Gizmos.DrawWireSphere(rb.position, 3f);
+        Gizmos.DrawWireSphere(rb.position, 1.5f);
 
-        // MoveAway
+        //Near red circle
         Gizmos.color = new Color(1f, 0f, 0f, .2f);
-        Gizmos.DrawWireSphere(rb.position, 1f);
+        Gizmos.DrawWireSphere(rb.position, .5f);
 
-        Gizmos.color = new Color(0f, 0f, 1f, .4f);
-        Gizmos.DrawLine(rb.position, rb.position + velocity.normalized);
+        //Boid direction line
+        Gizmos.color = new Color(0f, 0f, 1f, .6f);
+        Gizmos.DrawLine(rb.position, rb.position + velocity.normalized); //boid direction
     }
 
 }
