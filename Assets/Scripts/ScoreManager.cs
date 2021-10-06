@@ -9,6 +9,8 @@ public class ScoreManager : MonoBehaviour
     public Text blueScoreText;
     private int blueScore = 0;
 
+    public GameObject ballPrefab;
+
     private void UpdateUI()
     {
         redScoreText.text = "Score : " + redScore;
@@ -25,6 +27,13 @@ public class ScoreManager : MonoBehaviour
     {
         blueScore++;
         UpdateUI();
+    }
+
+    public void CreateBall(Vector2 pos)
+    {
+        GameObject g = Instantiate(ballPrefab, transform);
+        g.transform.position = pos;
+        g.GetComponent<Ball>().sm = this;
     }
 
 }
