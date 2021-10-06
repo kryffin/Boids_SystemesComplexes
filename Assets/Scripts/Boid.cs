@@ -18,7 +18,6 @@ public class Boid : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        rb.position = new Vector2(Random.Range(-6f, 6f), Random.Range(-3f, 3f));
         velocity = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
     }
 

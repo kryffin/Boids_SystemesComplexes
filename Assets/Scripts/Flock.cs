@@ -3,6 +3,12 @@ using UnityEngine;
 
 public class Flock : MonoBehaviour
 {
+    public enum TEAM
+    {
+        RED, BLUE
+    };
+    public TEAM team;
+
     public int NB_BOIDS = 25;
 
     public float VIEW_DIST; //is a boid too far from another ?
@@ -12,14 +18,26 @@ public class Flock : MonoBehaviour
     private List<Boid> boids;
 
     public GameObject boidPrefab;
+
+    public Color teamColor;
     
     void Start()
     {
         boids = new List<Boid>();
+        Vector2 spawnSize = GetComponent<BoxCollider2D>().size;
+        Vector2 spawnPos = transform.position;
+        spawnSize /= 2f;
 
         for (int i = 0; i < NB_BOIDS; i++)
         {
+            Vector2 spawn = new Vector2(Random.Range(-spawnSize.x, spawnSize.x) + spawnPos.x, Random.Range(-spawnSize.y, spawnSize.y) + spawnPos.y);
             GameObject g = Instantiate(boidPrefab, this.transform);
+            if (team == TEAM.RED)
+                g.layer = LayerMask.NameToLayer("Red Team");
+            else
+                g.layer = LayerMask.NameToLayer("Blue Team");
+            g.GetComponent<Rigidbody2D>().position = spawn;
+            g.GetComponent<SpriteRenderer>().color = teamColor;
             boids.Add(g.GetComponent<Boid>());
         }
     }
@@ -53,30 +71,36 @@ public class Flock : MonoBehaviour
             b.MoveAway(closeBoids, CLOSE_DIST);
 
             // Boid's alpha channel based on number of close neighbors
-            float color = (float)closeBoids.Count / (float)boids.Count;
-            b.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, color);
+            //float color = (float)closeBoids.Count / (float)boids.Count;
+            //b.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, color);
 
             // Casting a ray in front of the boid to check for incoming obstacles
             List<Vector2> avoid = new List<Vector2>();
 
+            LayerMask lm;
+            if (team == TEAM.RED)
+                lm = LayerMask.GetMask("Constraints", "Blue Team");
+            else
+                lm = LayerMask.GetMask("Constraints", "Red Team");
+
             foreach (RaycastHit2D h in
-                Physics2D.RaycastAll(b.rb.position, b.velocity.normalized, OBSTACLE_DIST, LayerMask.GetMask("Walls", "Obstacles")))
+                Physics2D.RaycastAll(b.rb.position, b.velocity.normalized, OBSTACLE_DIST, lm))
                 avoid.Add(h.point);
 
             foreach (RaycastHit2D h in
-                Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, 25f).normalized, OBSTACLE_DIST, LayerMask.GetMask("Walls", "Obstacles")))
+                Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, 25f).normalized, OBSTACLE_DIST, lm))
                 avoid.Add(h.point);
 
             foreach (RaycastHit2D h in
-                Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, -25f).normalized, OBSTACLE_DIST, LayerMask.GetMask("Walls", "Obstacles")))
+                Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, -25f).normalized, OBSTACLE_DIST, lm))
                 avoid.Add(h.point);
 
             foreach (RaycastHit2D h in
-                Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, 50f).normalized, OBSTACLE_DIST, LayerMask.GetMask("Walls", "Obstacles")))
+                Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, 50f).normalized, OBSTACLE_DIST, lm))
                 avoid.Add(h.point);
 
             foreach (RaycastHit2D h in
-                Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, -50f).normalized, OBSTACLE_DIST, LayerMask.GetMask("Walls", "Obstacles")))
+                Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, -50f).normalized, OBSTACLE_DIST, lm))
                 avoid.Add(h.point);
 
 
