@@ -9,6 +9,7 @@ public class Boid : MonoBehaviour
     private const float WITH_FACTOR = 40f;
     private const float AWAY_FACTOR = 5f;
     private const float AVOID_FACTOR = 5f;
+    private const float ATTRACT_FACTOR = 1f;
 
     public Vector2 velocity;
 
@@ -103,6 +104,24 @@ public class Boid : MonoBehaviour
         }
 
         velocity += (direction / AVOID_FACTOR);
+    }
+
+    public void Attract(List<Vector2> hitPositions)
+    {
+        if (hitPositions.Count < 1) return;
+
+        // Computes the average distance between the other balls
+        Vector2 avg = Vector2.zero;
+
+        foreach (Vector2 v in hitPositions)
+            avg += (rb.position - v);
+
+        avg /= hitPositions.Count;
+
+        Debug.DrawLine(rb.position, rb.position - avg, new Color(1f, 0.5f, 0f, 1f));
+
+        // Sets the velocity towards the others
+        velocity -= (avg / ATTRACT_FACTOR);
     }
 
     private void FixedUpdate()

@@ -14,13 +14,14 @@ public class Flock : MonoBehaviour
     public float VIEW_DIST; //is a boid too far from another ?
     public float CLOSE_DIST; //is a boid too close to another ?
     public float OBSTACLE_DIST; //is a boid too close to an obstacle ?
+    public float ATTRACT_DIST; //is a boid too close to a ball ?
 
     private List<Boid> boids;
 
     public GameObject boidPrefab;
 
     public Color teamColor;
-    
+
     void Start()
     {
         boids = new List<Boid>();
@@ -74,7 +75,8 @@ public class Flock : MonoBehaviour
             //float color = (float)closeBoids.Count / (float)boids.Count;
             //b.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, color);
 
-            // Casting a ray in front of the boid to check for incoming obstacles
+
+            // Casting rays in front of the boid to check for incoming obstacles
             List<Vector2> avoid = new List<Vector2>();
 
             LayerMask lm;
@@ -103,6 +105,35 @@ public class Flock : MonoBehaviour
                 Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, -50f).normalized, OBSTACLE_DIST, lm))
                 avoid.Add(h.point);
 
+            b.Avoid(avoid, OBSTACLE_DIST);
+
+            // Casting rays in front of the boid to check for incoming balls
+            List<Vector2> attract = new List<Vector2>();
+
+            lm = LayerMask.GetMask("Balls");
+
+            foreach (RaycastHit2D h in
+                Physics2D.RaycastAll(b.rb.position, b.velocity.normalized, ATTRACT_DIST, lm))
+                attract.Add(h.point);
+
+            foreach (RaycastHit2D h in
+                Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, 25f).normalized, ATTRACT_DIST, lm))
+                attract.Add(h.point);
+
+            foreach (RaycastHit2D h in
+                Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, -25f).normalized, ATTRACT_DIST, lm))
+                attract.Add(h.point);
+
+            foreach (RaycastHit2D h in
+                Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, 50f).normalized, ATTRACT_DIST, lm))
+                attract.Add(h.point);
+
+            foreach (RaycastHit2D h in
+                Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, -50f).normalized, ATTRACT_DIST, lm))
+                attract.Add(h.point);
+
+            b.Attract(attract);
+
 
             // Draws the rays
             Debug.DrawRay(b.rb.position, b.velocity.normalized, new Color(0f, 1f, 1f, 0.8f));
@@ -111,7 +142,6 @@ public class Flock : MonoBehaviour
             Debug.DrawRay(b.rb.position, Rotate(b.velocity, 50f).normalized, new Color(0f, 1f, 1f, 0.4f));
             Debug.DrawRay(b.rb.position, Rotate(b.velocity, -50f).normalized, new Color(0f, 1f, 1f, 0.4f));
 
-            b.Avoid(avoid, OBSTACLE_DIST);    
         }
     }
 }

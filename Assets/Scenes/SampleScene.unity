@@ -157,7 +157,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 973, y: -1}
+  m_AnchoredPosition: {x: 925, y: -1}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &142651314
@@ -187,7 +187,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 2
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -237,8 +237,9 @@ MonoBehaviour:
   VIEW_DIST: 1.5
   CLOSE_DIST: 0.5
   OBSTACLE_DIST: 1
+  ATTRACT_DIST: 2
   boidPrefab: {fileID: 5745734421570694973, guid: fe7569887a98fee4e823ab8caa529da9, type: 3}
-  teamColor: {r: 0.24313726, g: 0.24313726, b: 1, a: 1}
+  teamColor: {r: 0.23921569, g: 0.23921569, b: 1, a: 1}
 --- !u!4 &251073057
 Transform:
   m_ObjectHideFlags: 0
@@ -1126,6 +1127,7 @@ MonoBehaviour:
   VIEW_DIST: 1.5
   CLOSE_DIST: 0.5
   OBSTACLE_DIST: 1
+  ATTRACT_DIST: 2
   boidPrefab: {fileID: 5745734421570694973, guid: fe7569887a98fee4e823ab8caa529da9, type: 3}
   teamColor: {r: 1, g: 0.24056602, b: 0.24056602, a: 1}
 --- !u!61 &1855330059
