@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class Boid : MonoBehaviour
 {
-    public float MAX_VELOCITY = 2f;
+    public float MAX_VELOCITY = 4f;
+    public float MIN_VELOCITY = 1f;
 
     private const float CLOSE_FACTOR = 100f;
     private const float WITH_FACTOR = 40f;
@@ -128,10 +129,18 @@ public class Boid : MonoBehaviour
     {
         if (Mathf.Abs(velocity.x) > MAX_VELOCITY || Mathf.Abs(this.velocity.y) > MAX_VELOCITY)
         {
-            float scaleFactor = MAX_VELOCITY / Mathf.Max(Mathf.Abs(this.velocity.x), Mathf.Abs(this.velocity.y));
+            float scaleFactor = MAX_VELOCITY / Mathf.Max(Mathf.Abs(velocity.x), Mathf.Abs(velocity.y));
 
             velocity *= scaleFactor;
         }
+
+        if (Mathf.Abs(velocity.x) < MIN_VELOCITY && Mathf.Abs(this.velocity.y) < MIN_VELOCITY)
+        {
+            float scaleFactor = Mathf.Max(Mathf.Abs(velocity.x), Mathf.Abs(velocity.y)) / MIN_VELOCITY;
+
+            velocity /= scaleFactor;
+        };
+
 
         rb.MovePosition(rb.position + (velocity / 2f) * Time.deltaTime);
     }
