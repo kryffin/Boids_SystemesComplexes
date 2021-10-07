@@ -12,7 +12,6 @@ public class InputManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Vector2 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Debug.Log(worldPosition);
             sm.CreateBall(worldPosition);
         }
     }

@@ -17,7 +17,7 @@ public class Ball : MonoBehaviour
         }
 
         //spawn new ball ?
-        this.transform.position = new Vector3(Random.Range(-6f, 6f), Random.Range(-3f, 3f), 0f);
+        this.transform.position = new Vector3(Random.Range(-6f, 6f), Random.Range(-3f, 3f), -1f);
     }
 
 }

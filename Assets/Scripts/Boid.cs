@@ -16,9 +16,12 @@ public class Boid : MonoBehaviour
 
     public Rigidbody2D rb;
 
+    private Transform spotLight;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        spotLight = transform.Find("Spot Light").transform;
 
         velocity = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
     }
@@ -143,6 +146,8 @@ public class Boid : MonoBehaviour
 
 
         rb.MovePosition(rb.position + (velocity / 2f) * Time.deltaTime);
+
+        spotLight.rotation = Quaternion.LookRotation(velocity.normalized);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

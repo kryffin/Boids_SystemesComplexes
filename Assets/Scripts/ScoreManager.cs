@@ -13,8 +13,8 @@ public class ScoreManager : MonoBehaviour
 
     private void UpdateUI()
     {
-        redScoreText.text = "Score : " + redScore;
-        blueScoreText.text = "Score : " + blueScore;
+        redScoreText.text = redScore + "";
+        blueScoreText.text = blueScore + "";
     }
 
     public void RedScore()
