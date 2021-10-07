@@ -14,6 +14,8 @@ public class Boid : MonoBehaviour
 
     public Vector2 velocity;
 
+    [SerializeField] private Vector2 desiredVelocity;
+
     public Rigidbody2D rb;
 
     private Transform spotLight;
@@ -24,6 +26,7 @@ public class Boid : MonoBehaviour
         spotLight = transform.Find("Spot Light").transform;
 
         velocity = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+        desiredVelocity = Vector2.up;
     }
 
     public void MoveCloser(List<Boid> boids)
