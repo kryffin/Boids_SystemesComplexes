@@ -94,7 +94,7 @@ public class Boid : MonoBehaviour
 
         if (nbClose == 0) return;
 
-        Debug.DrawLine(rb.position, rb.position + (velocity - distance).normalized, Color.red);
+        Debug.DrawLine(rb.position, rb.position + distance.normalized, Color.red);
 
         //velocity += (distance / AWAY_FACTOR);
         desiredVelocity += (distance / AWAY_FACTOR);
@@ -114,6 +114,8 @@ public class Boid : MonoBehaviour
             else if (diff.y < 0f) diff.y = -Mathf.Sqrt(minDistance) - diff.y;
             direction += diff;
         }
+
+        Debug.DrawLine(rb.position, rb.position + direction.normalized, Color.red);
 
         //velocity += (direction / AVOID_FACTOR);
         desiredVelocity += (direction / AVOID_FACTOR);
