@@ -13,6 +13,7 @@ public class CandyManager : MonoBehaviour
     private void Start()
     {
         candy = Instantiate(candyPrefab, this.transform);
+        candy.name = "Candy";
         candyRb = candy.GetComponent<Rigidbody2D>();
         candySr = candy.GetComponent<SpriteRenderer>();
     }

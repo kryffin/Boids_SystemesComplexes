@@ -10,8 +10,8 @@ public class Boid : MonoBehaviour
     private const float WITH_FACTOR = 40f;
     private const float AWAY_FACTOR = 5f;
     private const float AVOID_FACTOR = 5f;
-    private const float ATTRACT_FACTOR = 1f;
-    private const float HUNGRY_FACTOR = 10f;
+    private const float ATTRACT_FACTOR = 4f;
+    private const float HUNGRY_FACTOR = 6f;
 
     public Vector2 velocity;
 
