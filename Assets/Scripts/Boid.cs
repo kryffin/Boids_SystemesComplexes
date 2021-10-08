@@ -14,8 +14,9 @@ public class Boid : MonoBehaviour
     private const float HUNGRY_FACTOR = 6f;
 
     public Vector2 velocity;
-
     [SerializeField] private Vector2 desiredVelocity;
+
+    private float turnSpeed = 2f;
 
     public Rigidbody2D rb;
 
@@ -27,7 +28,7 @@ public class Boid : MonoBehaviour
         spotLight = transform.Find("Spot Light").transform;
 
         velocity = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
-        desiredVelocity = Vector2.up;
+        desiredVelocity = velocity;
     }
 
     public void MoveCloser(List<Boid> boids)
@@ -49,7 +50,8 @@ public class Boid : MonoBehaviour
         Debug.DrawLine(rb.position, rb.position - avg, Color.white);
 
         // Sets the velocity towards the others
-        velocity -= (avg / CLOSE_FACTOR);
+        //velocity -= (avg / CLOSE_FACTOR);
+        desiredVelocity -= (avg / CLOSE_FACTOR);
     }
 
     public void MoveWith(List<Boid> boids)
@@ -65,7 +67,8 @@ public class Boid : MonoBehaviour
         avg /= boids.Count;
 
         // Sets our velocity towards the others
-        velocity += (avg / WITH_FACTOR);
+        //velocity += (avg / WITH_FACTOR);
+        desiredVelocity += (avg / WITH_FACTOR);
     }
 
     public void MoveAway(List<Boid> boids, float minDistance)
@@ -93,7 +96,8 @@ public class Boid : MonoBehaviour
 
         Debug.DrawLine(rb.position, rb.position + (velocity - distance).normalized, Color.red);
 
-        velocity += (distance / AWAY_FACTOR);
+        //velocity += (distance / AWAY_FACTOR);
+        desiredVelocity += (distance / AWAY_FACTOR);
     }
 
     public void Avoid (List<Vector2> hitPositions, float minDistance)
@@ -111,7 +115,8 @@ public class Boid : MonoBehaviour
             direction += diff;
         }
 
-        velocity += (direction / AVOID_FACTOR);
+        //velocity += (direction / AVOID_FACTOR);
+        desiredVelocity += (direction / AVOID_FACTOR);
     }
 
     public void Attract(List<Vector2> hitPositions)
@@ -129,7 +134,8 @@ public class Boid : MonoBehaviour
         Debug.DrawLine(rb.position, rb.position - avg, new Color(1f, 0.5f, 0f, 1f));
 
         // Sets the velocity towards the others
-        velocity -= (avg / ATTRACT_FACTOR);
+        //velocity -= (avg / ATTRACT_FACTOR);
+        desiredVelocity -= (avg / ATTRACT_FACTOR);
     }
 
     public void Hunger(Vector2 candyPosition)
@@ -137,11 +143,26 @@ public class Boid : MonoBehaviour
         Debug.DrawLine(rb.position, candyPosition, new Color(1f, 0.5f, 0.9f, 1f));
 
         // Sets the velocity towards the candy
-        velocity -= ((rb.position - candyPosition) / HUNGRY_FACTOR);
+        //velocity -= ((rb.position - candyPosition) / HUNGRY_FACTOR);
+        desiredVelocity -= ((rb.position - candyPosition) / HUNGRY_FACTOR);
     }
 
     private void FixedUpdate()
     {
+
+        Debug.DrawRay(rb.position, velocity.normalized * 1.5f, Color.green);
+
+        //float angle = Vector2.Angle(velocity.normalized, desiredVelocity.normalized);
+        //Debug.Log(angle);
+        //Quaternion rot = Quaternion.Euler(0f, 0f, angle/* * turnSpeed * Time.deltaTime*/);
+        //Quaternion rot2 = Quaternion.FromToRotation(velocity.normalized, desiredVelocity.normalized / 2f);
+        //velocity = rot2 * velocity;
+        velocity = Vector3.RotateTowards(velocity.normalized, desiredVelocity.normalized, turnSpeed * Time.fixedDeltaTime, 0f);
+
+        // Applies the desired velocity to the velocity
+        //velocity.x -= (velocity.x - desiredVelocity.x) * Time.deltaTime;
+        //velocity.y -= (velocity.y - desiredVelocity.y) * Time.deltaTime;
+
         if (Mathf.Abs(velocity.x) > MAX_VELOCITY || Mathf.Abs(this.velocity.y) > MAX_VELOCITY)
         {
             float scaleFactor = MAX_VELOCITY / Mathf.Max(Mathf.Abs(velocity.x), Mathf.Abs(velocity.y));
@@ -156,15 +177,23 @@ public class Boid : MonoBehaviour
             velocity /= scaleFactor;
         };
 
+        /*if (Mathf.Abs(desiredVelocity.x) > MAX_VELOCITY || Mathf.Abs(this.desiredVelocity.y) > MAX_VELOCITY)
+        {
+            float scaleFactor = MAX_VELOCITY / Mathf.Max(Mathf.Abs(desiredVelocity.x), Mathf.Abs(desiredVelocity.y));
 
-        rb.MovePosition(rb.position + (velocity / 2f) * Time.deltaTime);
+            desiredVelocity *= scaleFactor;
+        }
+
+        if (Mathf.Abs(desiredVelocity.x) < MIN_VELOCITY && Mathf.Abs(this.desiredVelocity.y) < MIN_VELOCITY)
+        {
+            float scaleFactor = Mathf.Max(Mathf.Abs(desiredVelocity.x), Mathf.Abs(desiredVelocity.y)) / MIN_VELOCITY;
+
+            desiredVelocity /= scaleFactor;
+        };*/
+
+        rb.MovePosition(rb.position + (velocity / 2f) * Time.fixedDeltaTime);
 
         spotLight.rotation = Quaternion.LookRotation(velocity.normalized);
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        velocity = -velocity;
     }
 
     private void OnDrawGizmos()
