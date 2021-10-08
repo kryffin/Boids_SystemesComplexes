@@ -11,6 +11,7 @@ public class Boid : MonoBehaviour
     private const float AWAY_FACTOR = 5f;
     private const float AVOID_FACTOR = 5f;
     private const float ATTRACT_FACTOR = 1f;
+    private const float HUNGRY_FACTOR = 10f;
 
     public Vector2 velocity;
 
@@ -129,6 +130,14 @@ public class Boid : MonoBehaviour
 
         // Sets the velocity towards the others
         velocity -= (avg / ATTRACT_FACTOR);
+    }
+
+    public void Hunger(Vector2 candyPosition)
+    {
+        Debug.DrawLine(rb.position, candyPosition, new Color(1f, 0.5f, 0.9f, 1f));
+
+        // Sets the velocity towards the candy
+        velocity -= ((rb.position - candyPosition) / HUNGRY_FACTOR);
     }
 
     private void FixedUpdate()

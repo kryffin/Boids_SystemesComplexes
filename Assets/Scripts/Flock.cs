@@ -22,6 +22,8 @@ public class Flock : MonoBehaviour
 
     public Color teamColor;
 
+    public CandyManager cm;
+
     void Start()
     {
         boids = new List<Boid>();
@@ -133,6 +135,9 @@ public class Flock : MonoBehaviour
                 attract.Add(h.point);
 
             b.Attract(attract);
+
+            //Attract towards candy if present
+            if (cm.isCandyDown) b.Hunger(cm.GetCandyPosition());
 
 
             // Draws the rays

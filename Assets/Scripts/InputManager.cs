@@ -17,11 +17,11 @@ public class InputManager : MonoBehaviour
         {
             Vector2 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             cm.Move(worldPosition);
-            cm.isCandyDown = true;
+            cm.CandyDown();
         }
         else
         {
-            cm.isCandyDown = false;
+            cm.CandyUp();
         }
     }
 }

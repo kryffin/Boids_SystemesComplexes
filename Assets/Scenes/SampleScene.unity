@@ -404,6 +404,7 @@ MonoBehaviour:
   ATTRACT_DIST: 2
   boidPrefab: {fileID: 5745734421570694973, guid: fe7569887a98fee4e823ab8caa529da9, type: 3}
   teamColor: {r: 0, g: 0.4987594, b: 0.5647059, a: 1}
+  cm: {fileID: 761738690}
 --- !u!4 &251073057
 Transform:
   m_ObjectHideFlags: 0
@@ -1629,6 +1630,7 @@ MonoBehaviour:
   ATTRACT_DIST: 2
   boidPrefab: {fileID: 5745734421570694973, guid: fe7569887a98fee4e823ab8caa529da9, type: 3}
   teamColor: {r: 0.7075472, g: 0, b: 0, a: 1}
+  cm: {fileID: 761738690}
 --- !u!61 &1855330059
 BoxCollider2D:
   m_ObjectHideFlags: 0
