@@ -120,7 +120,6 @@ public class Boid : MonoBehaviour
 
         // Computes the average distance between the other balls
         Vector2 avg = Vector2.zero;
-
         foreach (Vector2 v in hitPositions)
             avg += (rb.position - v);
 
@@ -130,6 +129,22 @@ public class Boid : MonoBehaviour
 
         // Sets the velocity towards the others
         velocity -= (avg / ATTRACT_FACTOR);
+    }
+    public void Fear(List<Vector2> hitPositions)
+    {
+        if (hitPositions.Count < 1) return;
+
+        // Computes the average distance between the other balls
+        Vector2 avg = Vector2.zero;
+        foreach (Vector2 v in hitPositions)
+            avg += (rb.position - v);
+
+        avg /= hitPositions.Count;
+
+        Debug.DrawLine(rb.position, rb.position - avg, new Color(1f, 0.5f, 0f, 1f));
+
+        // Sets the velocity towards the others
+        velocity += (avg / ATTRACT_FACTOR);
     }
 
     public void Hunger(Vector2 candyPosition)

@@ -3,11 +3,18 @@ using UnityEngine;
 
 public class Flock : MonoBehaviour
 {
+
+    public enum STATE
+    {
+        SEEK, FEAR
+    };
+    public STATE state = STATE.SEEK;
+
     public enum TEAM
     {
         RED, BLUE
     };
-    public TEAM team;
+    public TEAM team = TEAM.RED;
 
     public int NB_BOIDS = 25;
 
@@ -134,18 +141,19 @@ public class Flock : MonoBehaviour
                 Physics2D.RaycastAll(b.rb.position, Rotate(b.velocity, -50f).normalized, ATTRACT_DIST, lm))
                 attract.Add(h.point);
 
-            b.Attract(attract);
+            if (state == STATE.SEEK) b.Attract(attract);
+            if (state == STATE.FEAR) b.Fear(attract);
 
             //Attract towards candy if present
             if (cm.isCandyDown) b.Hunger(cm.GetCandyPosition());
 
 
             // Draws the rays
-            Debug.DrawRay(b.rb.position, b.velocity.normalized, new Color(0f, 1f, 1f, 0.8f));
-            Debug.DrawRay(b.rb.position, Rotate(b.velocity, 25f).normalized, new Color(0f, 1f, 1f, 0.6f));
-            Debug.DrawRay(b.rb.position, Rotate(b.velocity, -25f).normalized, new Color(0f, 1f, 1f, 0.6f));
-            Debug.DrawRay(b.rb.position, Rotate(b.velocity, 50f).normalized, new Color(0f, 1f, 1f, 0.4f));
-            Debug.DrawRay(b.rb.position, Rotate(b.velocity, -50f).normalized, new Color(0f, 1f, 1f, 0.4f));
+            Debug.DrawRay(b.rb.position, b.velocity.normalized * ATTRACT_DIST, new Color(0f, 1f, 1f, 0.8f));
+            Debug.DrawRay(b.rb.position, Rotate(b.velocity, 25f).normalized * ATTRACT_DIST, new Color(0f, 1f, 1f, 0.6f));
+            Debug.DrawRay(b.rb.position, Rotate(b.velocity, -25f).normalized * ATTRACT_DIST, new Color(0f, 1f, 1f, 0.6f));
+            Debug.DrawRay(b.rb.position, Rotate(b.velocity, 50f).normalized * ATTRACT_DIST, new Color(0f, 1f, 1f, 0.4f));
+            Debug.DrawRay(b.rb.position, Rotate(b.velocity, -50f).normalized * ATTRACT_DIST, new Color(0f, 1f, 1f, 0.4f));
 
         }
     }
