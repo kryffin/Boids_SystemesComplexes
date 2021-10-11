@@ -6,26 +6,42 @@ public class ScoreManager : MonoBehaviour
 
     public Text redScoreText;
     private int redScore = 0;
+    public int tmpRedScore = 0;
     public Text blueScoreText;
     private int blueScore = 0;
+    public int tmpBlueScore = 0;
 
     public GameObject ballPrefab;
 
     private void UpdateUI()
     {
-        redScoreText.text = redScore + "";
-        blueScoreText.text = blueScore + "";
+        redScoreText.text = "(" + tmpRedScore + ") " + redScore;
+        blueScoreText.text = blueScore + " (" + tmpBlueScore + ")";
     }
 
     public void RedScore()
     {
-        redScore++;
+        tmpRedScore++;
         UpdateUI();
     }
 
     public void BlueScore()
     {
-        blueScore++;
+        tmpBlueScore++;
+        UpdateUI();
+    }
+
+    public void RedGoal()
+    {
+        redScore += tmpRedScore;
+        tmpRedScore = 0;
+        UpdateUI();
+    }
+
+    public void BlueGoal()
+    {
+        blueScore += tmpBlueScore;
+        tmpBlueScore = 0;
         UpdateUI();
     }
 

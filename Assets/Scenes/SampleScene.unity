@@ -357,7 +357,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 0
+  m_Text: 0 (0)
 --- !u!222 &142651315
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -377,7 +377,7 @@ GameObject:
   - component: {fileID: 251073057}
   - component: {fileID: 251073056}
   - component: {fileID: 251073058}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: Blue Flock
   m_TagString: Untagged
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -396,6 +396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4827bb5ff45f99419b65aa1e9f4b406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
   team: 1
   NB_BOIDS: 5
   VIEW_DIST: 1.5
@@ -404,6 +405,7 @@ MonoBehaviour:
   ATTRACT_DIST: 2
   boidPrefab: {fileID: 5745734421570694973, guid: fe7569887a98fee4e823ab8caa529da9, type: 3}
   teamColor: {r: 0, g: 0.4987594, b: 0.5647059, a: 1}
+  sm: {fileID: 1656953877}
   cm: {fileID: 761738690}
 --- !u!4 &251073057
 Transform:
@@ -1313,7 +1315,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 0
+  m_Text: (0) 0
 --- !u!222 &1381269479
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1589,7 +1591,7 @@ GameObject:
   - component: {fileID: 1855330057}
   - component: {fileID: 1855330058}
   - component: {fileID: 1855330059}
-  m_Layer: 7
+  m_Layer: 11
   m_Name: Red Flock
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -1622,6 +1624,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4827bb5ff45f99419b65aa1e9f4b406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
   team: 0
   NB_BOIDS: 5
   VIEW_DIST: 1.5
@@ -1630,6 +1633,7 @@ MonoBehaviour:
   ATTRACT_DIST: 2
   boidPrefab: {fileID: 5745734421570694973, guid: fe7569887a98fee4e823ab8caa529da9, type: 3}
   teamColor: {r: 0.7075472, g: 0, b: 0, a: 1}
+  sm: {fileID: 1656953877}
   cm: {fileID: 761738690}
 --- !u!61 &1855330059
 BoxCollider2D:

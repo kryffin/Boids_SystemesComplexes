@@ -11,6 +11,7 @@ public class Boid : MonoBehaviour
     private const float AWAY_FACTOR = 5f;
     private const float AVOID_FACTOR = 5f;
     private const float ATTRACT_FACTOR = 4f;
+    private const float SCORE_FACTOR = 4f;
     private const float HUNGRY_FACTOR = 6f;
 
     public Vector2 velocity;
@@ -20,6 +21,8 @@ public class Boid : MonoBehaviour
     public Rigidbody2D rb;
 
     private Transform spotLight;
+
+    public Vector2 goalPosition;
 
     private void Start()
     {
@@ -145,6 +148,13 @@ public class Boid : MonoBehaviour
 
         // Sets the velocity towards the others
         velocity += (avg / ATTRACT_FACTOR);
+    }
+
+    // The boid will go towards his goal to score the points he has
+    public void Score()
+    {
+        // Sets the velocity towards the others
+        velocity -= ((rb.position - goalPosition) / SCORE_FACTOR);
     }
 
     public void Hunger(Vector2 candyPosition)

@@ -6,7 +6,7 @@ public class Flock : MonoBehaviour
 
     public enum STATE
     {
-        SEEK, FEAR
+        SEEK, FEAR, SCORE
     };
     public STATE state = STATE.SEEK;
 
@@ -23,12 +23,15 @@ public class Flock : MonoBehaviour
     public float OBSTACLE_DIST; //is a boid too close to an obstacle ?
     public float ATTRACT_DIST; //is a boid too close to a ball ?
 
+    private int nbInGoal = 0;
+
     private List<Boid> boids;
 
     public GameObject boidPrefab;
 
     public Color teamColor;
 
+    public ScoreManager sm;
     public CandyManager cm;
 
     void Start()
@@ -48,6 +51,7 @@ public class Flock : MonoBehaviour
                 g.layer = LayerMask.NameToLayer("Blue Team");
             g.GetComponent<Rigidbody2D>().position = spawn;
             g.GetComponent<SpriteRenderer>().color = teamColor;
+            g.GetComponent<Boid>().goalPosition = transform.position;
             boids.Add(g.GetComponent<Boid>());
         }
     }
@@ -64,6 +68,15 @@ public class Flock : MonoBehaviour
 
     void Update()
     {
+        if (gameObject.layer == LayerMask.NameToLayer("Red Goal") && sm.tmpRedScore >= 5)
+        {
+            state = STATE.SCORE;
+        }
+        else if (gameObject.layer == LayerMask.NameToLayer("Blue Goal") && sm.tmpBlueScore >= 5)
+        {
+            state = STATE.SCORE;
+        }
+
         foreach (Boid b in boids)
         {
             List<Boid> closeBoids = new List<Boid>();
@@ -79,11 +92,6 @@ public class Flock : MonoBehaviour
             b.MoveCloser(closeBoids);
             b.MoveWith(closeBoids);
             b.MoveAway(closeBoids, CLOSE_DIST);
-
-            // Boid's alpha channel based on number of close neighbors
-            //float color = (float)closeBoids.Count / (float)boids.Count;
-            //b.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, color);
-
 
             // Casting rays in front of the boid to check for incoming obstacles
             List<Vector2> avoid = new List<Vector2>();
@@ -143,6 +151,7 @@ public class Flock : MonoBehaviour
 
             if (state == STATE.SEEK) b.Attract(attract);
             if (state == STATE.FEAR) b.Fear(attract);
+            if (state == STATE.SCORE) b.Score();
 
             //Attract towards candy if present
             if (cm.isCandyDown) b.Hunger(cm.GetCandyPosition());
@@ -156,5 +165,33 @@ public class Flock : MonoBehaviour
             Debug.DrawRay(b.rb.position, Rotate(b.velocity, -50f).normalized * ATTRACT_DIST, new Color(0f, 1f, 1f, 0.4f));
 
         }
+
+        // Checking if the whole team is inside the goal to score
+        if (nbInGoal == 5)
+        {
+            if (gameObject.layer == LayerMask.NameToLayer("Red Goal"))
+            {
+                sm.RedGoal();
+            }
+            else if (gameObject.layer == LayerMask.NameToLayer("Blue Goal"))
+            {
+                sm.BlueGoal();
+            }
+            state = STATE.SEEK;
+        }
+
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        LayerMask lm = gameObject.layer == LayerMask.NameToLayer("Red Goal") ? LayerMask.NameToLayer("Red Team") : LayerMask.NameToLayer("Blue Team");
+        if (collision.gameObject.layer == lm) nbInGoal++;
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        LayerMask lm = gameObject.layer == LayerMask.NameToLayer("Red Goal") ? LayerMask.NameToLayer("Red Team") : LayerMask.NameToLayer("Blue Team");
+        if (collision.gameObject.layer == lm) nbInGoal--;
+    }
+
 }
